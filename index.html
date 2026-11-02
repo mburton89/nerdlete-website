@@ -7,7 +7,7 @@
   <title>Nerdletics | Stay Nerdy. Get Healthy.</title>
   <meta name="description" content="Fitness for the intellectually curious. Stay nerdy. Get healthy.">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+    /* Self-contained retro terminal styling; no external font download required. */
 
     :root {
       --bg: #050b07;
@@ -24,14 +24,40 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
+      cursor: crosshair;
+      animation: flicker 2s infinite;
       color: var(--text);
       background:
         radial-gradient(ellipse at 50% 0%, rgba(30,110,53,.18), transparent 48%),
         repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px),
         var(--bg);
-      font-family: "Share Tech Mono", "Courier New", monospace;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
       font-size: 18px;
       line-height: 1.45;
+    }
+
+    @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: .985; } }
+
+    /* Animated CRT scanlines, matching the BEAR reference page. */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: repeating-linear-gradient(
+        rgba(0, 0, 0, .20) 0,
+        rgba(0, 0, 0, .20) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      animation: scan 7s linear infinite;
+      z-index: 9999;
+    }
+    @keyframes scan {
+      from { background-position-y: 0; }
+      to { background-position-y: 100vh; }
     }
 
     a { color: inherit; text-decoration: none; }
@@ -54,7 +80,8 @@
     }
     .brand {
       color: var(--green);
-      font-family: "Press Start 2P", monospace;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+      font-weight: bold;
       font-size: clamp(13px, 2vw, 19px);
       text-shadow: var(--glow);
       white-space: nowrap;
@@ -70,6 +97,7 @@
     nav a:hover { border-color: var(--green); background: rgba(99,255,135,.08); }
 
     .hero {
+      position: relative;
       display: grid;
       grid-template-columns: 1.25fr .75fr;
       align-items: center;
@@ -77,10 +105,32 @@
       padding: 38px clamp(22px, 5vw, 58px);
       overflow: hidden;
     }
+    /* Soft moving phosphor glare across the hero panel. */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -55%;
+      width: 55%;
+      height: 140%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.10), transparent);
+      transform: skewX(-20deg);
+      opacity: .35;
+      pointer-events: none;
+      animation: hero-glare 5s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes hero-glare {
+      0%, 15% { left: -55%; }
+      85%, 100% { left: 115%; }
+    }
+    .hero > * { position: relative; z-index: 1; }
+
     h1 {
       margin: 0 0 16px;
       color: var(--green);
-      font-family: "Press Start 2P", monospace;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+      font-weight: bold;
       font-size: clamp(30px, 6vw, 72px);
       line-height: 1.25;
       letter-spacing: -3px;
@@ -90,7 +140,8 @@
     .tagline {
       margin: 0;
       color: var(--green);
-      font-family: "Press Start 2P", monospace;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+      font-weight: bold;
       font-size: clamp(15px, 2.5vw, 26px);
       line-height: 1.6;
     }
@@ -113,10 +164,22 @@
       align-items: center;
       transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
     }
-    .card:hover { transform: translateY(-3px); background: #0a1b10; box-shadow: var(--glow); }
+    .card:hover {
+      transform: translateY(-3px);
+      background: #0a1b10;
+      box-shadow: var(--glow);
+    }
+    @keyframes glitch {
+      0%, 100% { transform: translateY(-3px); }
+      25% { transform: translate(-1px, -3px); }
+      50% { transform: translate(1px, -2px); }
+      75% { transform: translate(-1px, -4px); }
+    }
+    .card:active { animation: glitch .22s linear; }
     .card h2 {
       color: var(--green);
-      font-family: "Press Start 2P", monospace;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+      font-weight: bold;
       font-size: clamp(13px, 1.8vw, 19px);
       line-height: 1.65;
       margin: 0 0 16px;
@@ -169,7 +232,8 @@
       <nav aria-label="Main navigation">
         <a href="#home">[ HOME ]</a>
         <a href="#tips">[ TIPS ]</a>
-        <a href="#app">[ 32FIT ]</a>
+        <a href="#app">[ 321FIT ]</a>
+        <a href="#app">[ B.E.A.R. ]</a>
         <a href="#about">[ ABOUT ]</a>
       </nav>
     </header>
@@ -208,7 +272,7 @@
       <section class="cards" aria-label="Nerdletics resources">
         <article class="card frame" id="tips">
           <div>
-            <div class="section-label">FILE 001 // FITNESS GUIDE</div>
+            <div class="section-label">LINK 001 // FITNESS GUIDE</div>
             <h2>Get in the Best Shape of Your Life</h2>
             <p>10 practical tips to build strength, boost energy, and feel great.</p>
             <a class="button" href="#about">READ THE 10 TIPS&nbsp; &gt;</a>
@@ -220,8 +284,8 @@
 
         <article class="card frame" id="app">
           <div>
-            <div class="section-label">UTILITY 002 // MOBILE TRAINER</div>
-            <h2>Download the 32FIT App</h2>
+            <div class="section-label">LINK 002 // MOBILE TRAINER</div>
+            <h2>Download the 321FIT App</h2>
             <p>Your free personal trainer. Train smarter and keep moving.</p>
             <a class="button" href="#" aria-label="Add your 32FIT app store link">GET THE APP&nbsp; &gt;</a>
           </div>
@@ -234,7 +298,7 @@
 
         <article class="card frame" id="bear">
           <div>
-            <div class="section-label">DATABASE 003 // PROGRESS LOG</div>
+            <div class="section-label">LINK 003 // PROGRESS LOG</div>
             <h2>Record Your Progress with the BEAR</h2>
             <p>The Bear Essentials Athletic Recorder. Track your progress over time.</p>
             <a class="button" href="#" aria-label="Add your BEAR tracker link">TRACK YOUR PROGRESS&nbsp; &gt;</a>
@@ -246,7 +310,7 @@
 
         <article class="card frame" id="about">
           <div>
-            <div class="section-label">USER PROFILE 004 // ORIGIN STORY</div>
+            <div class="section-label">LINK 004 // ORIGIN STORY</div>
             <h2>About</h2>
             <p>From spending my days at a computer to building a stronger, healthier life. Here's my story.</p>
             <a class="button" href="mailto:hello@nerdletics.com">MY STORY&nbsp; &gt;</a>
@@ -259,8 +323,8 @@
     </main>
 
     <footer class="frame">
-      <span>© 2026 NERDLETICS. ALL RIGHTS RESERVED.</span>
-      <span>BUILT FOR DREAMERS. POWERED BY STRENGTH.</span>
+      <span>© 2026 NERDLETICS</span>
+      <span>STAY NERDY. GET HEALTHY</span>
     </footer>
   </div>
 </body>

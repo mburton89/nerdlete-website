@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>B.E.A.R. - Bear Essentials Athletic Recorder</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Reset margins/padding */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; cursor: crosshair; }
+    body {
+      background-color: black;
+      color: #FFD85B;
+      font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+      animation: flicker 2s infinite;
+    }
+    @keyframes flicker { 0%,100%{opacity:1;} 50%{opacity:0.97;} }
+    /* Header GIF */
+    .hero-gif { display:block; width:100%; max-width:700px; margin:0 auto; position:relative; }
+    .hero-gif::after {
+      content:''; position:absolute; top:-20%; left:-50%; width:200%; height:140%;
+      background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 60%);
+      transform:translateX(-100%) skewX(-20deg); opacity:0.3;
+      animation:glare 3s ease-in-out infinite;
+    }
+    @keyframes glare { 0%{transform:translateX(-100%) skewX(-20deg);}100%{transform:translateX(100%) skewX(-20deg);} }
+    /* Scanlines */
+    body::before {
+      content:''; position:fixed; top:0; left:0; width:100vw; height:100vh;
+      background-image:repeating-linear-gradient(rgba(0,0,0,0.2) 0, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 3px);
+      pointer-events:none; animation:scan 7s linear infinite; z-index:9999;
+    }
+    @keyframes scan { from{background-position-y:0;} to{background-position-y:100vh;} }
+    /* Container */
+    .container {
+      max-width:700px; margin:-2px auto 0; padding:0 20px 20px;
+      border:2px solid #FFD85B; border-radius:0;
+      box-shadow: inset 0 0 10px rgba(255,216,91,0.5);
+    }
+    .score-display { text-align:center; font-size:1.4em; margin:10px 0; font-weight:bold; }
+    /* Controls */
+    .controls-row { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:20px; overflow-x:auto; padding-bottom:10px; }
+    .control { display:flex; flex-direction:column; min-width:120px; max-width:200px; }
+    .control label { margin-bottom:4px; font-size:0.9em; }
+    /* Inputs & Buttons */
+    select, input[type="number"], input[type="date"] {
+      background:#FFD85B; color:black; border:1px solid #FFD85B;
+      font-family:inherit; font-size:1em; padding:4px 6px; width:100%;
+    }
+    input::placeholder { color:#7F692D; }
+    button {
+      background:#FFD85B; color:black; border:1px solid #FFD85B;
+      padding:10px 20px; font-weight:bold; cursor:pointer; margin:0 5px;
+    }
+    button:hover { background:#BF9C44; }
+    button:active { background:#5D4A1F; }
+    select:focus, input:focus, button:focus {
+      background:#7F672D; color:#FFCE5B; outline:none; box-shadow:0 0 8px #FFD85B;
+    }
+    /* Chart */
+    #progressChart { display:block; background:black; border:1px solid #FFD85B; width:100%; }
+    @keyframes glitch { 0%{transform:none;}20%{transform:translate(-2px,2px);}40%{transform:translate(2px,-2px);}60%{transform:translate(-2px,-2px);}80%{transform:translate(2px,2px);}100%{transform:none;} }
+    #progressChart.glitch { animation:glitch 0.3s linear; }
+    /* How-to-use */
+    .how-to-use { max-width:700px; margin:10px auto; color:#FFD85B; font-size:1em; }
+    .how-to-use h2 { font-weight:bold; margin-bottom:10px; }
+    .how-to-use ul { list-style:none; padding:0; }
+    .how-to-use ul li { margin:5px 0; text-align:left; }
+    .how-to-use ul ul { margin-left:20px; }
+    .how-to-use a { color:#FFD85B; text-decoration:underline; font-weight:bold; }
+    .how-to-use a:hover { color:#BF9C44; }
+  </style>
+</head>
+<body>
+  <img src="images/bear-app.gif" class="hero-gif" alt="BEAR App Header">
+  <div class="container">
+    <div class="score-display">Your B.E.A.R. Score: <span id="bearScore">--</span></div>
+    <div class="controls-row">
+      <div class="control"><label for="exercise">EXERCISE</label><select id="exercise"><option value="deadlift">Deadlift</option><option value="dumbbell">Overhead Dumbell Press</option><option value="pullups">Pull-ups</option><option value="incline">Incline Bench Press</option><option value="squats">Squats</option><option value="dips">Dips</option><option value="runTime">1‑Mile Run</option></select></div>
+      <div class="control" id="value-input"><label for="value">7-REP MAX</label><input type="number" id="value" placeholder="Enter Weight"></div>
+      <div class="control" id="runtime-input" style="display:none;"><label>RUN TIME</label><div class="run-time"><input type="number" id="runMin" placeholder="Min"><input type="number" id="runSec" placeholder="Sec"></div></div>
+      <div class="control"><label for="date">DATE</label><input type="date" id="date"></div>
+      <button id="saveBtn">SAVE ENTRY</button>
+    </div>
+    <canvas id="progressChart" width="600" height="400"></canvas>
+  </div>
+  <!-- Buttons outside container -->
+  <div style="text-align:center; margin:20px 0;"><button id="showHowBtn">HOW TO USE</button><button id="exportBtn">EXPORT DATA</button><button id="clearBtn">CLEAR ALL DATA</button></div>
+  <!-- How to Use section -->
+  <div id="howUse" class="how-to-use" style="display:none;"><h2>HOW TO USE THE B.E.A.R.</h2><ul><li>• The B.E.A.R. program consists of your 7‑rep max across 7 exercises.</li><li>• Select an exercise, enter your 7‑rep max weight (or run time).<ul><li>• (Optional) choose the date if recording a previous entry.</li></ul></li><li>• Click <strong>SAVE ENTRY</strong> to store your result and update the graph.</li><li>• Your B.E.A.R. Score is calculated automatically: (sum of latest lifts multiplied by mile-run speed in mph).</li><li>• And don't forget to fuel up on Nukey Nectar, Honey Thunder Cola, and Flappy Flakes in <a href="https://atomic Mills.com/bearplane.html" target="_blank">Bearplane</a> before your workouts.</li></ul></div>
+  <!-- Footer Logo -->
+  <div style="text-align:center; margin:20px 0;"><a href="https://atomicmills.com" target="_blank"><img src="images/atomic-mills-logo-amber.gif" alt="Atomic Mills Logo" style="max-width:200px; width:100%;"></a></div>
+  <script>
+    const storageKey = 'bearTrackerData';
+    let chartInstance;
+    const exSel = document.getElementById('exercise');
+    const dateIn = document.getElementById('date');
+    const valInput = document.getElementById('value-input');
+    const rtInput = document.getElementById('runtime-input');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const showBtn = document.getElementById('showHowBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const howUse = document.getElementById('howUse');
+    const scoreEl = document.getElementById('bearScore');
+
+    function getToday(){return new Date().toISOString().split('T')[0];}
+    function toSecs(m,s){return m*60+s;}
+    function triggerGlitch(){
+      const c = document.getElementById('progressChart');
+      c.classList.add('glitch');
+      setTimeout(()=>c.classList.remove('glitch'),300);
+    }
+    function beep(){
+      const ctx=new (window.AudioContext||window.webkitAudioContext)();
+      const o=ctx.createOscillator();o.frequency.value=660;o.connect(ctx.destination);o.start();setTimeout(()=>{o.stop();ctx.close();},100);
+    }
+    function updateScore(){
+      const data=JSON.parse(localStorage.getItem(storageKey)||'[]');
+      if(!data.length){scoreEl.innerText='0';return;}      
+      const s=data.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+      const keys=['deadlift','dumbbell','pullups','incline','squats','dips'];
+      let sum=0;keys.forEach(k=>{const e=[...s].reverse().find(x=>x[k]!=null);if(e)sum+=e[k];});
+      const lr=[...s].reverse().find(x=>x.runTime!=null);
+      const mph=lr?Math.max(3600/lr.runTime,1):1;
+      scoreEl.innerText=Math.round(sum*mph);
+    }
+    function renderChart(){
+      const all=JSON.parse(localStorage.getItem(storageKey)||'[]').sort((a,b)=>new Date(a.date)-new Date(b.date));
+      const lbls=all.map(e=>e.date),ex=exSel.value;
+      const d=all.map(e=>e[ex]);
+      const lm={deadlift:'Deadlift',dumbbell:'Overhead Dumbell Press',pullups:'Pull-ups',incline:'Incline Bench Press',squats:'Squats',dips:'Dips',runTime:'1‑Mile Run'};
+      if(chartInstance)chartInstance.destroy();
+      chartInstance=new Chart(document.getElementById('progressChart').getContext('2d'),{type:'line',data:{labels:lbls,datasets:[{label:lm[ex],data:d,borderColor:'#FFD85B',fill:false,point:{radius:3,hoverRadius:8}}]},options:{responsive:true,scales:{y:{ticks:{color:'#FFD85B'},grid:{color:'#7F692D'}},x:{ticks:{color:'#FFD85B'},grid:{color:'#7F692D'}}},plugins:{legend:{labels:{color:'#FFD85B'}}},interaction:{mode:'nearest',intersect:true}}});
+    }
+    window.onload=()=>{
+      dateIn.value=dateIn.value||getToday();
+      exSel.dispatchEvent(new Event('change'));
+      showBtn.addEventListener('click',()=>{howUse.style.display=(howUse.style.display==='none'?'block':'none');});
+    };
+    exSel.addEventListener('change',()=>{if(exSel.value==='runTime'){valInput.style.display='none';rtInput.style.display='flex';}else{valInput.style.display='flex';rtInput.style.display='none';document.getElementById('value').placeholder='Enter Weight';}renderChart();triggerGlitch();updateScore();});
+    saveBtn.addEventListener('click',()=>{
+      const d=dateIn.value;if(!d){alert('Please enter a date.');return;}const ex=exSel.value;
+      const val=ex==='runTime'?toSecs(+document.getElementById('runMin').value,+document.getElementById('runSec').value):+document.getElementById('value').value;
+      const arr=JSON.parse(localStorage.getItem(storageKey)||'[]');
+      let ent=arr.find(e=>e.date===d);
+      if(!ent){ent={date:d,deadlift:null,dumbbell:null,pullups:null,incline:null,squats:null,dips:null,runTime:null};arr.push(ent);}ent[ex]=val;
+      localStorage.setItem(storageKey,JSON.stringify(arr));renderChart();triggerGlitch();beep();updateScore();
+    });
+    exportBtn.addEventListener('click',()=>{
+      const raw=JSON.parse(localStorage.getItem(storageKey)||'[]');
+      if(!raw.length){alert('No data to export');return;}
+      const hdr=['date','deadlift','dumbbell','pullups','incline','squats','dips','runTime'];
+      const rows=raw.map(r=>hdr.map(h=>r[h]!=null?r[h]:'').join(','));
+      const csv=[hdr.join(','),...rows].join('\r\n');
+      const blob=new Blob([csv],{type:'text/csv'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download='bear-data.csv';a.click();URL.revokeObjectURL(url);
+    });
+    clearBtn.addEventListener('click',()=>{if(!confirm('Clear all data?'))return;localStorage.removeItem(storageKey);renderChart();beep();updateScore();});
+  </script>
+</body>
+</html>
