@@ -194,7 +194,12 @@
       box-shadow: 0 0 8px rgba(99,255,135,.15);
     }
     .button:hover { color: var(--bg); background: var(--green); }
-    .icon { width: 100%; max-height: 130px; color: var(--green); }
+    .icon {
+      width: 100%;
+      max-height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(99,255,135,.35));
+    }
     footer {
       margin-top: 42px;
       padding: 10px 16px;
@@ -231,9 +236,9 @@
       <a class="brand" href="#home">NERDLETICS<span class="cursor"></span></a>
       <nav aria-label="Main navigation">
         <a href="#home">[ HOME ]</a>
-        <a href="#tips">[ TIPS ]</a>
-        <a href="#app">[ 321FIT ]</a>
-        <a href="#app">[ B.E.A.R. ]</a>
+        <a href="tips.html">[ TIPS ]</a>
+        <a href="321fit.html">[ 321FIT ]</a>
+        <a href="thebear.html">[ B.E.A.R. ]</a>
         <a href="#about">[ ABOUT ]</a>
       </nav>
     </header>
@@ -275,11 +280,9 @@
             <div class="section-label">LINK 001 // FITNESS GUIDE</div>
             <h2>Get in the Best Shape of Your Life</h2>
             <p>10 practical tips to build strength, boost energy, and feel great.</p>
-            <a class="button" href="#about">READ THE 10 TIPS&nbsp; &gt;</a>
+            <a class="button" href="tips.html">READ THE 10 TIPS&nbsp; &gt;</a>
           </div>
-          <svg class="icon" viewBox="0 0 140 120" role="img" aria-label="Pixel dumbbell icon">
-            <g fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="miter"><path d="M12 40h20v40H12zM32 28h20v64H32zM52 55h36v10H52zM88 28h20v64H88zM108 40h20v40h-20z"/></g>
-          </svg>
+          <img class="icon" src="images/tips-icon" alt="Tips icon">
         </article>
 
         <article class="card frame" id="app">
@@ -287,13 +290,9 @@
             <div class="section-label">LINK 002 // MOBILE TRAINER</div>
             <h2>Download the 321FIT App</h2>
             <p>Your free personal trainer. Train smarter and keep moving.</p>
-            <a class="button" href="#" aria-label="Add your 32FIT app store link">GET THE APP&nbsp; &gt;</a>
+            <a class="button" href="321fit.html">GET THE APP&nbsp; &gt;</a>
           </div>
-          <svg class="icon" viewBox="0 0 140 120" role="img" aria-label="Retro smartphone icon">
-            <g fill="none" stroke="currentColor" stroke-width="6"><rect x="31" y="5" width="78" height="110" rx="5"/><path d="M58 15h24M60 103h20"/></g>
-            <text x="70" y="57" text-anchor="middle" fill="currentColor" font-family="monospace" font-size="18" font-weight="bold">32</text>
-            <text x="70" y="78" text-anchor="middle" fill="currentColor" font-family="monospace" font-size="18" font-weight="bold">FIT</text>
-          </svg>
+          <img class="icon" src="images/app-icon" alt="321FIT app icon">
         </article>
 
         <article class="card frame" id="bear">
@@ -301,11 +300,9 @@
             <div class="section-label">LINK 003 // PROGRESS LOG</div>
             <h2>Record Your Progress with the BEAR</h2>
             <p>The Bear Essentials Athletic Recorder. Track your progress over time.</p>
-            <a class="button" href="#" aria-label="Add your BEAR tracker link">TRACK YOUR PROGRESS&nbsp; &gt;</a>
+            <a class="button" href="thebear.html">TRACK YOUR PROGRESS&nbsp; &gt;</a>
           </div>
-          <svg class="icon" viewBox="0 0 140 120" role="img" aria-label="Pixel bear head icon">
-            <g fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"><path d="M25 33L13 20 7 43l14 13-3 25 24 26 28 8 28-8 24-26-3-25 14-13-6-23-12 13-17-8-14-13H53L39 25z"/><path d="M43 54l12-7 12 7m8 0 12-7 12 7M53 76l17 12 17-12-17-9z"/><path d="M61 89l9 5 9-5"/></g>
-          </svg>
+          <img class="icon" src="images/bear-icon" alt="BEAR tracker icon">
         </article>
 
         <article class="card frame" id="about">
@@ -315,9 +312,7 @@
             <p>From spending my days at a computer to building a stronger, healthier life. Here's my story.</p>
             <a class="button" href="mailto:hello@nerdletics.com">MY STORY&nbsp; &gt;</a>
           </div>
-          <svg class="icon" viewBox="0 0 140 120" role="img" aria-label="Pixel person at a computer">
-            <g fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"><path d="M76 12h53v43H76zM101 55v13m-17 0h35"/><path d="M23 45l18-13 19 8 8 20-8 12-25-4-16-10z" fill="currentColor"/><path d="M35 75l-9 24h44l-10-24M70 86h17v-9h16v-9h21"/></g>
-          </svg>
+          <img class="icon" src="images/about-icon" alt="About icon">
         </article>
       </section>
     </main>
